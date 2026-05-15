@@ -14,13 +14,13 @@ const badges = [
 
 export default function DashboardPage() {
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      <section className="rounded-2xl bg-white p-6 shadow-sm lg:col-span-2">
+    <div className="space-y-4">
+      <section className="rounded-2xl bg-white p-5 shadow-sm">
         <p className="text-sm font-medium text-slate-500">Skill Passport</p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-900">{user.name}</h1>
-        <p className="mt-1 text-slate-600">{user.location}</p>
+        <h1 className="mt-2 text-2xl font-bold text-slate-900">{user.name}</h1>
+        <p className="mt-1 text-sm text-slate-600">{user.location}</p>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="mt-5 grid gap-3">
           <div className="rounded-xl bg-slate-50 p-4">
             <p className="text-xs text-slate-500">HustleScore</p>
             <p className="text-2xl font-bold text-slate-900">{user.score}</p>
@@ -36,9 +36,9 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">Verification Badges</h2>
-        <ul className="mt-4 space-y-3">
+      <section className="rounded-2xl bg-white p-5 shadow-sm">
+        <h2 className="text-base font-semibold text-slate-900">Verification Badges</h2>
+        <ul className="mt-3 space-y-2">
           {badges.map((badge) => (
             <li key={badge} className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
               {badge}

@@ -1,5 +1,6 @@
 mod models;
 mod routes;
+mod services;
 mod state;
 
 use axum::{Json, Router, routing::get};
@@ -10,7 +11,9 @@ use crate::state::AppState;
 
 #[tokio::main]
 async fn main() {
-    let state = AppState::default();
+    dotenvy::dotenv().ok();
+
+    let state = AppState::new();
 
     let app = Router::new()
         .route("/health", get(health_check))

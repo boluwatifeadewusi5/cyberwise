@@ -8,5 +8,6 @@ pub struct Transaction {
     pub hustle_id: String,
     pub amount_ngn: u32,
     pub status: String,
+    pub provider_reference: Option<String>,
     pub created_at: DateTime<Utc>,
 }

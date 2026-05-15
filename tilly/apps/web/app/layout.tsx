@@ -18,7 +18,7 @@ export default function RootLayout({
       <body className="min-h-full bg-slate-50 text-slate-900">
         <div className="min-h-screen bg-[radial-gradient(circle_at_top,#dbeafe_0%,#f8fafc_45%,#fefce8_100%)]">
           <Nav />
-          <main className="mx-auto w-full max-w-6xl px-6 pb-12">{children}</main>
+          <main className="mx-auto w-full max-w-md px-4 pb-24 pt-4">{children}</main>
         </div>
       </body>
     </html>

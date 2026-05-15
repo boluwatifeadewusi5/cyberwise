@@ -9,6 +9,7 @@ use uuid::Uuid;
 
 use crate::{
     models::user::{CreateUserRequest, TrustScoreResponse, User},
+    services::gemini::validate_user_trust_score,
     state::AppState,
 };
 
@@ -68,20 +69,43 @@ async fn get_trust_score(
     Path(id): Path<String>,
     State(state): State<AppState>,
 ) -> Result<Json<TrustScoreResponse>, (StatusCode, Json<serde_json::Value>)> {
-    let users = state.users.lock().map_err(|_| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({"error": "state lock poisoned"})),
-        )
-    })?;
+    let user = {
+        let users = state.users.lock().map_err(|_| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"error": "state lock poisoned"})),
+            )
+        })?;
 
-    let user = users
-        .iter()
-        .find(|user| user.id == id)
-        .ok_or((StatusCode::NOT_FOUND, Json(json!({"error": "user not found"}))))?;
+        users
+            .iter()
+            .find(|user| user.id == id)
+            .ok_or((StatusCode::NOT_FOUND, Json(json!({"error": "user not found"}))))?
+            .clone()
+    };
+
+    let local_score = user.trust_score();
+    let gemini = validate_user_trust_score(
+        &state.http_client,
+        state.gemini_api_key.as_deref(),
+        &user,
+        local_score,
+    )
+    .await;
+
+    let (score, source, notes) = match gemini {
+        Ok(result) => (result.validated_score, result.source, result.feedback),
+        Err(error) => (
+            local_score,
+            "local_fallback".to_string(),
+            format!("Gemini validation failed: {error}"),
+        ),
+    };
 
     Ok(Json(TrustScoreResponse {
-        user_id: user.id.clone(),
-        score: user.trust_score(),
+        user_id: user.id,
+        score,
+        validation_source: source,
+        notes,
     }))
 }

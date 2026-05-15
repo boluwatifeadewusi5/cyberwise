@@ -14,6 +14,7 @@ use crate::{
         hustle::{CompleteHustleRequest, CreateHustleRequest, Hustle},
         transaction::Transaction,
     },
+    services::squad::disburse_payment,
     state::AppState,
 };
 
@@ -87,6 +88,8 @@ async fn complete_hustle(
     State(state): State<AppState>,
     Json(payload): Json<CompleteHustleRequest>,
 ) -> Result<Json<Transaction>, (StatusCode, Json<serde_json::Value>)> {
+    let user_id = payload.user_id;
+
     {
         let mut users = state.users.lock().map_err(|_| {
             (
@@ -97,7 +100,7 @@ async fn complete_hustle(
 
         let user = users
             .iter_mut()
-            .find(|user| user.id == payload.user_id)
+            .find(|user| user.id == user_id.as_str())
             .ok_or((StatusCode::NOT_FOUND, Json(json!({"error": "user not found"}))))?;
 
         user.completed_jobs += 1;
@@ -119,16 +122,34 @@ async fn complete_hustle(
             .ok_or((StatusCode::NOT_FOUND, Json(json!({"error": "hustle not found"}))))?;
 
         hustle.is_completed = true;
-        hustle.assigned_user_id = Some(payload.user_id.clone());
+        hustle.assigned_user_id = Some(user_id.clone());
         hustle.budget_ngn
+    };
+
+    let squad_payment = disburse_payment(
+        &state.http_client,
+        &state.squad_config,
+        &user_id,
+        &id,
+        payout_amount,
+    )
+    .await;
+
+    let (status, provider_reference) = match squad_payment {
+        Ok(result) => (result.status, result.provider_reference),
+        Err(error) => (
+            format!("payment_failed_needs_retry: {error}"),
+            None,
+        ),
     };
 
     let transaction = Transaction {
         id: Uuid::new_v4().to_string(),
-        user_id: payload.user_id,
+        user_id,
         hustle_id: id,
         amount_ngn: payout_amount,
-        status: "paid_instantly_via_squad".to_string(),
+        status,
+        provider_reference,
         created_at: Utc::now(),
     };
 

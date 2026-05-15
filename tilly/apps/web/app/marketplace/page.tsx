@@ -21,18 +21,18 @@ const gigs = [
 
 export default function MarketplacePage() {
   return (
-    <div className="space-y-6">
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-bold text-slate-900">Nearby Opportunities</h1>
-        <p className="mt-2 text-slate-600">
+    <div className="space-y-4">
+      <section className="rounded-2xl bg-white p-5 shadow-sm">
+        <h1 className="text-2xl font-bold text-slate-900">Nearby Opportunities</h1>
+        <p className="mt-2 text-sm text-slate-600">
           Location-aware matching prioritizes gigs close to you.
         </p>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <section className="grid gap-3">
         {gigs.map((gig) => (
           <article key={gig.title} className="rounded-2xl bg-white p-5 shadow-sm">
-            <p className="text-sm font-semibold text-emerald-700">{gig.fit}</p>
+            <p className="text-xs font-semibold text-emerald-700">{gig.fit}</p>
             <h2 className="mt-2 text-lg font-semibold text-slate-900">{gig.title}</h2>
             <p className="mt-1 text-sm text-slate-600">{gig.location}</p>
             <p className="mt-4 text-xl font-bold text-slate-900">{gig.payout}</p>

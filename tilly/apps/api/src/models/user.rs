@@ -23,6 +23,8 @@ pub struct CreateUserRequest {
 pub struct TrustScoreResponse {
     pub user_id: String,
     pub score: f32,
+    pub validation_source: String,
+    pub notes: String,
 }
 
 impl User {

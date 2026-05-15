@@ -13,10 +13,10 @@ const formula = [
 
 export default function InsightsPage() {
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
+    <div className="space-y-4">
+      <section className="rounded-2xl bg-white p-5 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">AI Recommendations</h1>
-        <ul className="mt-4 space-y-3">
+        <ul className="mt-3 space-y-2">
           {recommendations.map((recommendation) => (
             <li key={recommendation} className="rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-900">
               {recommendation}
@@ -25,12 +25,12 @@ export default function InsightsPage() {
         </ul>
       </section>
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
+      <section className="rounded-2xl bg-white p-5 shadow-sm">
         <h2 className="text-2xl font-bold text-slate-900">Trust Score Model</h2>
         <p className="mt-2 text-sm text-slate-600">
           Transparent scoring helps workers grow financial identity over time.
         </p>
-        <div className="mt-4 space-y-3">
+        <div className="mt-3 space-y-2">
           {formula.map((item) => (
             <div
               key={item.label}
